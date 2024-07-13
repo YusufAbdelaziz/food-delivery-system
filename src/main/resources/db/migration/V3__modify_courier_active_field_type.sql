@@ -1,0 +1,4 @@
+ALTER TABLE
+  `courier`
+MODIFY
+  COLUMN `active` BOOLEAN;
