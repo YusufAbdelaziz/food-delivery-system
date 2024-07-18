@@ -38,16 +38,16 @@ CREATE TABLE `courier` (
   `password` varchar(256) NOT NULL,
   `name` varchar(100) NOT NULL,
   `successful_orders` int unsigned DEFAULT 0,
-  `active` Tinyint,
+  `active` BOOLEAN DEFAULT 0,
   `earnings` decimal(10, 2) DEFAULT 0.0,
-  `role_ID` bigint unsigned NOT NULL,
+  `role_id` bigint unsigned NOT NULL,
   `avg_rating` decimal(3, 2) DEFAULT 0.00,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
   `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`Courier_ID`),
-  FOREIGN KEY (`role_ID`) REFERENCES role(role_ID)
+  PRIMARY KEY (`courier_id`),
+  FOREIGN KEY (`role_id`) REFERENCES role(role_ID)
 );
 
 CREATE TABLE `user` (
@@ -56,14 +56,14 @@ CREATE TABLE `user` (
   `password` varchar(256),
   `email` varchar(50) UNIQUE,
   `name` varchar(100),
-  `image_url` varchar(255) NULL,
+  `image_url` text NULL,
   `role_id` bigint unsigned NOT NULL,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
   `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),
-  FOREIGN KEY (`role_id`) REFERENCES role(`role_ID`)
+  FOREIGN KEY (`role_id`) REFERENCES role(`role_id`)
 );
 
 CREATE TABLE `restaurant` (
@@ -71,7 +71,7 @@ CREATE TABLE `restaurant` (
   `name` varchar(100) NOT NULL,
   `successful_orders` int unsigned DEFAULT 0,
   `avg_rating` decimal(3, 2) DEFAULT 0.00,
-  `image_url` varchar(255) NULL,
+  `image_url` text NULL,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
@@ -112,8 +112,8 @@ CREATE TABLE `address` (
 
 CREATE TABLE `cuisine` (
   `cuisine_id` bigint unsigned AUTO_INCREMENT,
-  `name` varchar(20),
-  `image_url` varchar(255) null,
+  `name` varchar(20) NOT NULL,
+  `image_url` text NULL,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
@@ -122,26 +122,24 @@ CREATE TABLE `cuisine` (
 );
 
 CREATE TABLE `restaurant_cuisine` (
-  `cuisine_id` bigint unsigned,
   `restaurant_id` bigint unsigned,
+  `cuisine_id` bigint unsigned,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
   `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`cuisine_id`, `restaurant_id`),
+  PRIMARY KEY (`restaurant_id`, `cuisine_id`),
   FOREIGN KEY (`cuisine_id`) REFERENCES cuisine(`cuisine_id`),
   FOREIGN KEY (`restaurant_id`) REFERENCES restaurant(`restaurant_id`)
 );
 
 CREATE TABLE `menu` (
   `menu_id` bigint unsigned AUTO_INCREMENT,
-  `restaurant_id` bigint unsigned,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
   `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`Menu_ID`, `Restaurant_ID`),
-  FOREIGN KEY (`restaurant_id`) REFERENCES restaurant(`restaurant_id`)
+  PRIMARY KEY (`menu_id`)
 );
 
 CREATE TABLE `section` (
@@ -158,8 +156,8 @@ CREATE TABLE `section` (
 
 CREATE TABLE `item` (
   `item_id` bigint unsigned AUTO_INCREMENT,
-  `name` varchar(20),
-  `price` decimal(6, 2),
+  `name` varchar(20) NOT NULL,
+  `price` decimal(6, 2) NOT NULL,
   `section_id` bigint unsigned,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
@@ -171,8 +169,8 @@ CREATE TABLE `item` (
 
 CREATE TABLE `spec` (
   `spec_id` bigint unsigned AUTO_INCREMENT,
-  `type` ENUM('CHECKBOX', 'RADIO'),
-  `name` varchar(20),
+  `type` ENUM('CHECKBOX', 'RADIO') NOT NULL,
+  `name` varchar(20) NOT NULL,
   `item_id` bigint unsigned,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
@@ -184,8 +182,8 @@ CREATE TABLE `spec` (
 
 CREATE TABLE `option` (
   `option_id` bigint unsigned AUTO_INCREMENT,
-  `name` varchar(20) null,
-  `price` decimal(6, 2),
+  `name` varchar(20) NOT NULL,
+  `price` decimal(6, 2) NOT NULL,
   `spec_id` bigint unsigned,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
@@ -198,9 +196,11 @@ CREATE TABLE `option` (
 CREATE TABLE `promotion` (
   `promotion_id` bigint unsigned AUTO_INCREMENT,
   `restaurant_id` bigint unsigned null,
-  `description` varchar(200),
+  `headline` VARCHAR(250),
+  `description` TEXT,
   `discount_type` ENUM('FIXED', 'PERCENTAGE', 'DELIVERY') NOT NULL,
-  `discount_value` decimal(5, 2) NOT NULL,
+  `discount_value` decimal(7, 2) NOT NULL,
+  `code` varchar(100),
   `start_Date` timestamp,
   `end_Date` timestamp null,
   `max_users` int unsigned null,
@@ -214,14 +214,32 @@ CREATE TABLE `promotion` (
   FOREIGN KEY (`restaurant_id`) REFERENCES restaurant(`restaurant_id`)
 );
 
+CREATE TABLE `user_promotion` (
+  `user_promotion_id` bigint unsigned AUTO_INCREMENT,
+  `user_id` bigint unsigned,
+  `promotion_id` bigint unsigned,
+  `created_by` varchar(100),
+  `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_by` varchar(100),
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_promotion_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
+  FOREIGN KEY (`promotion_id`) REFERENCES promotion(`promotion_id`)
+);
+
 CREATE TABLE `order` (
   `order_id` bigint unsigned AUTO_INCREMENT,
   `user_id` bigint unsigned NOT NULL,
   `courier_id` bigint unsigned NOT NULL,
-  `client_address_id` bigint unsigned NOT NULL,
-  `promotion_id` bigint unsigned null NULL,
+  `promotion_id` bigint unsigned NULL,
   `estimated_delivery_date` timestamp NOT NULL,
-  `status` Enum('PENDING', 'PREPARING', 'DISPATCHED'),
+  `status` Enum(
+    'PENDING',
+    'PREPARING',
+    'DISPATCHED',
+    'SUCCESSFUL',
+    'CANCELED'
+  ),
   `order_rating` tinyint unsigned,
   `courier_rating` tinyint unsigned,
   `restaurant_feedback` varchar(2000) null,
@@ -234,7 +252,6 @@ CREATE TABLE `order` (
   PRIMARY KEY (`order_id`),
   FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
   FOREIGN KEY (`courier_id`) REFERENCES courier(`courier_id`),
-  FOREIGN KEY (`client_address_id`) REFERENCES address(`address_id`),
   FOREIGN KEY (`promotion_id`) REFERENCES promotion(`promotion_id`)
 );
 
@@ -242,38 +259,52 @@ CREATE TABLE `order_restaurant` (
   `order_restaurant_id` bigint unsigned AUTO_INCREMENT,
   `order_id` bigint unsigned,
   `restaurant_id` bigint unsigned,
+  `delivery_fee_id` bigint unsigned,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
   `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`order_restaurant_id`),
   FOREIGN KEY (`order_id`) REFERENCES `order`(`order_id`),
+  FOREIGN KEY (`delivery_fee_id`) REFERENCES `delivery_fee`(`delivery_fee_id`),
   FOREIGN KEY (`restaurant_id`) REFERENCES restaurant(`restaurant_id`)
 );
 
 CREATE TABLE `order_item` (
-  `item_id` bigint unsigned,
+  `order_item_id` bigint unsigned,
   `order_restaurant_id` bigint unsigned,
-  `quantity` int,
+  `name` varchar(20) NOT NULL,
+  `price` decimal(6, 2) NOT NULL,
+  `quantity` int NOT NULL,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
   `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`item_id`),
-  FOREIGN KEY (`item_id`) REFERENCES item(`item_id`),
+  PRIMARY KEY (`order_item_id`),
   FOREIGN KEY (`order_restaurant_id`) REFERENCES order_restaurant(`order_restaurant_id`)
 );
 
-CREATE TABLE `user_promotion` (
-  `user_promotion_id` bigint unsigned AUTO_INCREMENT,
-  `user_id` bigint unsigned,
-  `promotion_id` bigint unsigned,
-  `used_at` timestamp,
+CREATE TABLE `order_spec` (
+  `order_spec_id` bigint unsigned AUTO_INCREMENT,
+  `order_item_id` bigint unsigned NOT NULL,
+  `name` varchar(20) NOT NULL,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
   `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_promotion_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
-  FOREIGN KEY (`promotion_id`) REFERENCES promotion(`promotion_id`)
+  PRIMARY KEY (`order_spec_id`),
+  FOREIGN KEY (`order_item_id`) REFERENCES order_item(`order_item_id`)
+);
+
+CREATE TABLE `order_option` (
+  `order_option_id` bigint unsigned AUTO_INCREMENT,
+  `order_spec_id` bigint unsigned NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `price` decimal(6, 2) NOT NULL,
+  `created_by` varchar(100),
+  `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_by` varchar(100),
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`order_option_id`),
+  FOREIGN KEY (`order_spec_id`) REFERENCES order_spec(`order_spec_id`)
 );

@@ -1,15 +1,9 @@
 package com.joe.abdelaziz.food_delivery_system.base;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.joe.abdelaziz.food_delivery_system.address.Address;
 import com.joe.abdelaziz.food_delivery_system.role.Role;
 import com.joe.abdelaziz.food_delivery_system.utiles.validation.NullableEmail;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -20,7 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -59,20 +52,11 @@ public class AppUser extends BaseEntity {
   @Column(unique = true)
   private String email;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
-  @JsonIgnoreProperties("user")
-  private Set<Address> addresses = new HashSet<>();
-
   @JsonProperty(value = "image_url")
   private String imageUrl;
 
   @OneToOne
   @JoinColumn(name = "role_id")
   private Role role;
-
-  @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-  @JoinColumn(name = "active_address_id")
-  @JsonIgnoreProperties("user")
-  private Address activeAddress;
 
 }

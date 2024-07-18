@@ -28,8 +28,8 @@ public class AddressService {
 
     Address insertedAddress = addressRepository.save(address);
     if (insertedAddress.isActive()) {
-      customerService.updateActiveAddress(insertedAddress, insertedAddress.getUser().getId());
-      setAllAddressesActivityToFalse(insertedAddress.getId(), insertedAddress.getUser().getId());
+      customerService.updateActiveAddress(insertedAddress, insertedAddress.getCustomer().getId());
+      setAllAddressesActivityToFalse(insertedAddress.getId(), insertedAddress.getCustomer().getId());
     }
     return insertedAddress;
   }

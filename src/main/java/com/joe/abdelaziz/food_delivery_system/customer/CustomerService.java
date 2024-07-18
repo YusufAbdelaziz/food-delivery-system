@@ -2,11 +2,9 @@ package com.joe.abdelaziz.food_delivery_system.customer;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import com.joe.abdelaziz.food_delivery_system.address.Address;
-import com.joe.abdelaziz.food_delivery_system.base.AppUser;
 import com.joe.abdelaziz.food_delivery_system.region.Region;
 import com.joe.abdelaziz.food_delivery_system.region.RegionService;
 import com.joe.abdelaziz.food_delivery_system.role.Role;
@@ -42,7 +40,7 @@ public class CustomerService {
     // only one address
     if (customer.getAddresses() != null) {
       for (Address address : customer.getAddresses()) {
-        address.setUser(customer);
+        address.setCustomer(customer);
         if (address.getRegion() != null) {
           Long id = address.getRegion().getId();
           Region regionById = regionService.findRegionById(id);
@@ -59,8 +57,8 @@ public class CustomerService {
     return insertedUser;
   }
 
-  public AppUser findUserById(Long id) {
-    AppUser user = customerRepository.findById(id)
+  public Customer findCustomerById(Long id) {
+    Customer user = customerRepository.findById(id)
         .orElseThrow(() -> new RecordNotFoundException(String.format("User of record id %d is not found", id)));
     return user;
   }

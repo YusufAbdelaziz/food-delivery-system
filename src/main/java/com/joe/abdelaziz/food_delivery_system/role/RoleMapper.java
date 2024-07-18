@@ -1,19 +1,21 @@
-package com.joe.abdelaziz.food_delivery_system.role;
+// package com.joe.abdelaziz.food_delivery_system.role;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+// import java.util.SortedSet;
 
-@Mapper
-public interface RoleMapper {
+// import org.mapstruct.Mapper;
+// import org.mapstruct.Mapping;
+// import org.mapstruct.Mappings;
 
-  RoleDto map(Role role);
+// @Mapper(imports = SortedSet.class)
+// public interface RoleMapper {
 
-  @Mappings(value = {
-      @Mapping(target = "createdBy", ignore = true),
-      @Mapping(target = "createdDate", ignore = true),
-      @Mapping(target = "lastModifiedBy", ignore = true),
-      @Mapping(target = "lastModifiedDate", ignore = true)
-  })
-  Role unMap(RoleDto roleDto);
-}
+// RoleDto map(Role role);
+
+// @Mappings(value = {
+// @Mapping(target = "createdBy", ignore = true),
+// @Mapping(target = "createdDate", ignore = true),
+// @Mapping(target = "lastModifiedBy", ignore = true),
+// @Mapping(target = "lastModifiedDate", ignore = true)
+// })
+// Role unMap(RoleDto roleDto);
+// }

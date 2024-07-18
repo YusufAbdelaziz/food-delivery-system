@@ -39,12 +39,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(RecordNotFoundException.class)
-
-  public ResponseEntity<ErrorResponse> handleEntityNodeFoundException(RecordNotFoundException ex) {
+  public ResponseEntity<ErrorResponse> handleEntityNotFoundException(RecordNotFoundException ex) {
 
     log.error(ex.getMessage(), ex);
     ErrorResponse body = new ErrorResponse(ex.getLocalizedMessage(), Arrays.asList(ex.getMessage()));
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(body);
+  }
+
+  @ExceptionHandler(EntityNotProvidedException.class)
+  public ResponseEntity<ErrorResponse> handleEntityNotProvided(RecordNotFoundException ex) {
+    log.error(ex.getMessage(), ex);
+    ErrorResponse body = new ErrorResponse(ex.getLocalizedMessage(), Arrays.asList(ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(body);
   }
 

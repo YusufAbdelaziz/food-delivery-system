@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1/addresses")
@@ -21,14 +22,20 @@ public class AddressController {
   private final AddressService addressService;
 
   @PostMapping("")
-  public ResponseEntity<Address> addUser(@Valid @RequestBody Address address) {
+  public ResponseEntity<Address> addAddress(@Valid @RequestBody Address address) {
     Address insertedAddress = addressService.insertAddress(address);
 
     return ResponseEntity.ok().body(insertedAddress);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Address> getUserById(@PathVariable Long id) {
+  public ResponseEntity<Address> getAddressById(@PathVariable Long id) {
+    return ResponseEntity.ok().body(addressService.findAddressById(id));
+  }
+
+  // TODO : Fix this.
+  @GetMapping("")
+  public ResponseEntity<Address> getAllAddressesByUserId(@PathVariable Long id) {
     return ResponseEntity.ok().body(addressService.findAddressById(id));
   }
 

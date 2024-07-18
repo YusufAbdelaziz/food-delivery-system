@@ -1,8 +1,11 @@
 package com.joe.abdelaziz.food_delivery_system.courier;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.joe.abdelaziz.food_delivery_system.base.BaseEntity;
+import com.joe.abdelaziz.food_delivery_system.orders.order.Order;
 import com.joe.abdelaziz.food_delivery_system.role.Role;
 
 import jakarta.persistence.Column;
@@ -11,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -52,5 +56,8 @@ public class Courier extends BaseEntity {
   private BigDecimal earnings;
 
   private int successfulOrders;
+
+  @OneToMany(mappedBy = "courier")
+  private Set<Order> orders = new HashSet<>();
 
 }

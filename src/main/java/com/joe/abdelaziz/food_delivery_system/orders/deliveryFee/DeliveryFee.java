@@ -1,6 +1,8 @@
-package com.joe.abdelaziz.food_delivery_system.deliveryFee;
+package com.joe.abdelaziz.food_delivery_system.orders.deliveryFee;
 
 import java.sql.Time;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -8,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.SqlTimeSerializer;
 import com.joe.abdelaziz.food_delivery_system.base.BaseEntity;
+import com.joe.abdelaziz.food_delivery_system.orders.orderRestaurant.OrderRestaurant;
 import com.joe.abdelaziz.food_delivery_system.region.Region;
 import com.joe.abdelaziz.food_delivery_system.utiles.serialization.SqlTimeDeserializer;
 
@@ -17,9 +20,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -50,4 +53,7 @@ public class DeliveryFee extends BaseEntity {
   @JsonDeserialize(using = SqlTimeDeserializer.class)
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
   private Time estimatedDuration;
+
+  @OneToMany(mappedBy = "deliveryFee")
+  private Set<OrderRestaurant> orderRestaurants = new HashSet<>();
 }

@@ -1,4 +1,4 @@
-package com.joe.abdelaziz.food_delivery_system.deliveryFee;
+package com.joe.abdelaziz.food_delivery_system.orders.deliveryFee;
 
 import java.util.List;
 
