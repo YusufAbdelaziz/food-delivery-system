@@ -184,11 +184,13 @@ public class PromotionService {
 
     if (promotion.getEndDate().isBefore(LocalDateTime.now())) {
       promotion.setActive(false);
+      promotionRepository.save(promotion);
       throw new BusinessLogicException("Promotion code is expired");
     }
 
     if (promotion.getUsedCount() >= promotion.getMaxUsers()) {
       promotion.setActive(false);
+      promotionRepository.save(promotion);
       throw new BusinessLogicException("Promotion code has exceeded the maximum number of usages");
     }
   }
