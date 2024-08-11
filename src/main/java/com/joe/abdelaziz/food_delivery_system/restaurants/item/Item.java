@@ -2,12 +2,12 @@ package com.joe.abdelaziz.food_delivery_system.restaurants.item;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joe.abdelaziz.food_delivery_system.base.BaseEntity;
 import com.joe.abdelaziz.food_delivery_system.restaurants.itemSpec.Spec;
-import com.joe.abdelaziz.food_delivery_system.restaurants.section.Section;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,7 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -38,13 +37,16 @@ public class Item extends BaseEntity {
   @Positive
   private BigDecimal price;
 
-  @ManyToOne
-  @JoinColumn(name = "section_id")
-  @JsonIgnoreProperties("items")
-  private Section section;
-
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", orphanRemoval = true)
-  @JsonIgnoreProperties("section")
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "item_id")
+  @JsonIgnoreProperties("item")
   private Set<Spec> specs = new HashSet<>();
 
+  public void addSpec(Spec spec) {
+    specs.add(spec);
+  }
+
+  public void addSpecs(List<Spec> newSpecs) {
+    specs.addAll(newSpecs);
+  }
 }

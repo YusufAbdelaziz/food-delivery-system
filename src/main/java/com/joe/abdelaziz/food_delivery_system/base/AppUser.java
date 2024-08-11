@@ -1,7 +1,12 @@
 package com.joe.abdelaziz.food_delivery_system.base;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.joe.abdelaziz.food_delivery_system.role.Role;
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.joe.abdelaziz.food_delivery_system.security.role.Role;
 import com.joe.abdelaziz.food_delivery_system.utiles.validation.NullableEmail;
 
 import jakarta.persistence.Column;
@@ -28,7 +33,7 @@ import lombok.Setter;
 @DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-public class AppUser extends BaseEntity {
+public class AppUser extends BaseEntity implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "user_id")
@@ -52,11 +57,48 @@ public class AppUser extends BaseEntity {
   @Column(unique = true)
   private String email;
 
-  @JsonProperty(value = "image_url")
   private String imageUrl;
 
   @OneToOne
   @JoinColumn(name = "role_id")
+  @JsonIgnore
   private Role role;
+
+  @Override
+  @JsonIgnore
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return role.getType().getAuthorities();
+
+  }
+
+  @JsonIgnore
+  @Override
+  public String getUsername() {
+    return phoneNumber;
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isAccountNonExpired() {
+    return UserDetails.super.isAccountNonExpired();
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isAccountNonLocked() {
+    return UserDetails.super.isAccountNonLocked();
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return UserDetails.super.isCredentialsNonExpired();
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isEnabled() {
+    return UserDetails.super.isEnabled();
+  }
 
 }

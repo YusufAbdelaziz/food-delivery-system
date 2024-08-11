@@ -4,7 +4,7 @@ CREATE TABLE `role` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`role_id`)
 );
 
@@ -14,7 +14,7 @@ CREATE TABLE `region` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`Region_ID`)
 );
 
@@ -22,11 +22,11 @@ CREATE TABLE `delivery_fee` (
   `delivery_fee_id` bigint unsigned AUTO_INCREMENT,
   `to_region_id` bigint unsigned NOT NULL,
   `from_region_id` bigint unsigned NOT NULL,
-  `price` SMALLINT unsigned NOT NULL,
+  `price` decimal(5, 2) NOT NULL,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`delivery_fee_id`),
   FOREIGN KEY (`to_region_id`) REFERENCES region(region_id),
   FOREIGN KEY (`from_region_id`) REFERENCES region(region_id)
@@ -45,7 +45,7 @@ CREATE TABLE `courier` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`courier_id`),
   FOREIGN KEY (`role_id`) REFERENCES role(role_ID)
 );
@@ -61,7 +61,7 @@ CREATE TABLE `user` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),
   FOREIGN KEY (`role_id`) REFERENCES role(`role_id`)
 );
@@ -75,7 +75,7 @@ CREATE TABLE `restaurant` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`restaurant_id`)
 );
 
@@ -92,7 +92,7 @@ CREATE TABLE `address` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `active` BOOLEAN DEFAULT 0,
   PRIMARY KEY (`address_ID`),
   FOREIGN KEY (`user_id`) REFERENCES user(`user_id`),
@@ -117,7 +117,7 @@ CREATE TABLE `cuisine` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`cuisine_id`)
 );
 
@@ -127,7 +127,7 @@ CREATE TABLE `restaurant_cuisine` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`restaurant_id`, `cuisine_id`),
   FOREIGN KEY (`cuisine_id`) REFERENCES cuisine(`cuisine_id`),
   FOREIGN KEY (`restaurant_id`) REFERENCES restaurant(`restaurant_id`)
@@ -138,7 +138,7 @@ CREATE TABLE `menu` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`menu_id`)
 );
 
@@ -149,7 +149,7 @@ CREATE TABLE `section` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`section_id`),
   FOREIGN KEY (`menu_id`) REFERENCES menu(`menu_id`)
 );
@@ -162,7 +162,7 @@ CREATE TABLE `item` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`item_id`),
   FOREIGN KEY (`section_id`) REFERENCES section(`section_id`)
 );
@@ -175,21 +175,20 @@ CREATE TABLE `spec` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`spec_id`),
   FOREIGN KEY (`item_id`) REFERENCES item(`item_id`)
 );
 
-CREATE TABLE `option` (
-  `option_id` bigint unsigned AUTO_INCREMENT,
+CREATE TABLE `spec_option` (
+  `spec_option_id` bigint unsigned PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(20) NOT NULL,
   `price` decimal(6, 2) NOT NULL,
   `spec_id` bigint unsigned,
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`option_id`),
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`spec_id`) REFERENCES spec(`spec_id`)
 );
 
@@ -209,7 +208,7 @@ CREATE TABLE `promotion` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`promotion_id`),
   FOREIGN KEY (`restaurant_id`) REFERENCES restaurant(`restaurant_id`)
 );
@@ -221,7 +220,7 @@ CREATE TABLE `user_promotion` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_promotion_id`),
   FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
   FOREIGN KEY (`promotion_id`) REFERENCES promotion(`promotion_id`)
@@ -239,7 +238,7 @@ CREATE TABLE `order` (
     'DISPATCHED',
     'SUCCESSFUL',
     'CANCELED'
-  ),
+  ) DEFAULT 'PENDING',
   `order_rating` tinyint unsigned,
   `courier_rating` tinyint unsigned,
   `restaurant_feedback` varchar(2000) null,
@@ -248,7 +247,7 @@ CREATE TABLE `order` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`order_id`),
   FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
   FOREIGN KEY (`courier_id`) REFERENCES courier(`courier_id`),
@@ -263,7 +262,7 @@ CREATE TABLE `order_restaurant` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`order_restaurant_id`),
   FOREIGN KEY (`order_id`) REFERENCES `order`(`order_id`),
   FOREIGN KEY (`delivery_fee_id`) REFERENCES `delivery_fee`(`delivery_fee_id`),
@@ -279,7 +278,7 @@ CREATE TABLE `order_item` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`order_item_id`),
   FOREIGN KEY (`order_restaurant_id`) REFERENCES order_restaurant(`order_restaurant_id`)
 );
@@ -291,7 +290,7 @@ CREATE TABLE `order_spec` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`order_spec_id`),
   FOREIGN KEY (`order_item_id`) REFERENCES order_item(`order_item_id`)
 );
@@ -304,7 +303,7 @@ CREATE TABLE `order_option` (
   `created_by` varchar(100),
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `last_modified_by` varchar(100),
-  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `last_modified_date` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`order_option_id`),
   FOREIGN KEY (`order_spec_id`) REFERENCES order_spec(`order_spec_id`)
 );

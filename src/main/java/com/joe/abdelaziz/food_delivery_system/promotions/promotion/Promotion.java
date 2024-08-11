@@ -21,11 +21,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.Null;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(uniqueConstraints = {
+    @UniqueConstraint(columnNames = { "code", "active" })
+})
 @Getter
 @Setter
 public class Promotion extends BaseEntity {
@@ -35,14 +41,19 @@ public class Promotion extends BaseEntity {
   @Column(name = "promotion_id")
   private Long id;
 
+  @Size(min = 0, max = 100, message = "Description should be between 0 and 250 characters in length")
   private String description;
 
+  @NotBlank
+  @Size(min = 3, max = 100, message = "Promotion code should be between 3 and 100 characters in length")
   private String code;
 
   @Enumerated(EnumType.STRING)
   private DiscountType discountType;
 
   private BigDecimal discountValue;
+
+  private String headline;
 
   private LocalDateTime startDate;
 
@@ -54,7 +65,6 @@ public class Promotion extends BaseEntity {
 
   private boolean active;
 
-  @Null
   @ManyToOne
   @JoinColumn(name = "restaurant_id")
   @JsonIgnoreProperties("promotions")
@@ -67,5 +77,9 @@ public class Promotion extends BaseEntity {
   @OneToMany(mappedBy = "promotion")
   @JsonIgnoreProperties("promotion")
   private Set<Order> orders = new HashSet<>();
+
+  public void addOrder(Order order) {
+    orders.add(order);
+  }
 
 }

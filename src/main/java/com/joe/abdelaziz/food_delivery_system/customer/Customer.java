@@ -3,6 +3,7 @@ package com.joe.abdelaziz.food_delivery_system.customer;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joe.abdelaziz.food_delivery_system.address.Address;
 import com.joe.abdelaziz.food_delivery_system.base.AppUser;
@@ -10,15 +11,11 @@ import com.joe.abdelaziz.food_delivery_system.orders.order.Order;
 import com.joe.abdelaziz.food_delivery_system.promotions.userPromotion.UserPromotion;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,24 +24,39 @@ import lombok.Setter;
 @Setter
 @DiscriminatorValue("USER")
 public class Customer extends AppUser {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "user_id")
-  private Long id;
 
   @OneToMany(mappedBy = "customer")
+  @JsonIgnore
   private Set<Order> orders = new HashSet<>();
 
-  @OneToOne(cascade = CascadeType.ALL, mappedBy = "customer")
-  @JoinColumn(name = "active_address_id")
-  @JsonIgnoreProperties("customer")
-  private Address activeAddress;
-
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer", orphanRemoval = true)
-  @JsonIgnoreProperties({ "user", "restaurant" })
+  @JsonIgnoreProperties({ "customer", "restaurant" })
   private Set<Address> addresses = new HashSet<>();
 
   @OneToMany(mappedBy = "customer")
   @JsonIgnoreProperties("userPromotions")
+  @JsonIgnore
   private Set<UserPromotion> userPromotions = new HashSet<>();
+
+  @Transient
+  @JsonIgnoreProperties({ "customer" })
+  private Address activeAddress;
+
+  public void addAddress(Address address) {
+    addresses.add(address);
+    address.setCustomer(this);
+  }
+
+  public void removeAddress(Address address) {
+    addresses.remove(address);
+    address.setCustomer(null);
+  }
+
+  @PostLoad
+  private void assignActiveAddress() {
+    for (Address address : addresses) {
+      if (address.getActive())
+        activeAddress = address;
+    }
+  }
 }

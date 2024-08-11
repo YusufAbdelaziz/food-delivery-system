@@ -1,19 +1,20 @@
 package com.joe.abdelaziz.food_delivery_system.admin;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.joe.abdelaziz.food_delivery_system.role.Role;
-import com.joe.abdelaziz.food_delivery_system.role.RoleService;
-import com.joe.abdelaziz.food_delivery_system.role.RoleType;
+import com.joe.abdelaziz.food_delivery_system.security.role.Role;
+import com.joe.abdelaziz.food_delivery_system.security.role.RoleService;
+import com.joe.abdelaziz.food_delivery_system.security.role.RoleType;
 import com.joe.abdelaziz.food_delivery_system.utiles.exception.RecordNotFoundException;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AdminService {
 
   private final AdminRepository adminRepository;
@@ -37,5 +38,9 @@ public class AdminService {
 
   public List<Admin> findAll() {
     return adminRepository.findAllByRoleType(RoleType.ADMIN);
+  }
+
+  public Optional<Admin> findByPhoneNumber(String phoneNumber) {
+    return adminRepository.findByPhoneNumber(phoneNumber);
   }
 }

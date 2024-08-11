@@ -44,8 +44,9 @@ public class Restaurant extends BaseEntity {
 
   private int successfulOrders;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "menu_id")
+  @JsonIgnoreProperties("restaurant")
   private Menu menu;
 
   @NotNull
@@ -55,12 +56,11 @@ public class Restaurant extends BaseEntity {
   @JsonIgnoreProperties({ "restaurant", "user" })
   private Address address;
 
-  @OneToMany(mappedBy = "restaurant")
-  @JsonIgnoreProperties("restaurant")
+  @OneToMany(mappedBy = "existingRestaurant")
   @JsonIgnore
   private Set<OrderRestaurant> orderRestaurants = new HashSet<>();
 
-  @OneToMany(mappedBy = "restaurant")
+  @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
   @JsonIgnoreProperties("restaurant")
   private Set<RestaurantCuisine> cuisines = new HashSet<>();
 
@@ -68,4 +68,6 @@ public class Restaurant extends BaseEntity {
   @JsonIgnoreProperties("restaurant")
   @JsonIgnore
   private Set<Promotion> promotions = new HashSet<>();
+
+  private boolean visible;
 }

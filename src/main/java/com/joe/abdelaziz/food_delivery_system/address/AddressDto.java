@@ -1,35 +1,32 @@
 package com.joe.abdelaziz.food_delivery_system.address;
 
-import com.joe.abdelaziz.food_delivery_system.customer.UserDto;
-import com.joe.abdelaziz.food_delivery_system.region.Region;
+import com.joe.abdelaziz.food_delivery_system.region.RegionDTO;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
-public class AddressDto {
+public class AddressDTO {
   private Long id;
 
-  private double latitude;
+  private Double latitude;
 
-  private double longitude;
+  private Double longitude;
 
   private String description;
 
-  private UserDto userId;
-
-  private Region region;
+  private RegionDTO region;
 
   @NotNull
   @Positive(message = "You should put a positive number as your building number")
-  private short buildingNumber;
+  private Short buildingNumber;
 
   @NotNull
   @Positive(message = "You should put a positive number as your apartment number")
-  private short apartmentNumber;
+  private Short apartmentNumber;
 
   @NotNull
-  private boolean isActive;
+  private Boolean active;
 
 }

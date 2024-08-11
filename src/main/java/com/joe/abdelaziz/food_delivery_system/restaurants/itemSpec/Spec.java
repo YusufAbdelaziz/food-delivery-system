@@ -1,12 +1,12 @@
 package com.joe.abdelaziz.food_delivery_system.restaurants.itemSpec;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joe.abdelaziz.food_delivery_system.base.BaseEntity;
-import com.joe.abdelaziz.food_delivery_system.restaurants.item.Item;
-import com.joe.abdelaziz.food_delivery_system.restaurants.option.Option;
+import com.joe.abdelaziz.food_delivery_system.restaurants.specOption.SpecOption;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,8 +17,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,12 +34,19 @@ public class Spec extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private SpecType type;
 
-  @ManyToOne
-  @JoinColumn(name = "item_id")
-  private Item item;
+  @NotBlank(message = "Spec name should not be blank")
+  private String name;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "spec", orphanRemoval = true)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "spec_id")
   @JsonIgnoreProperties("spec")
-  private Set<Option> options = new HashSet<>();
+  private Set<SpecOption> options = new HashSet<>();
 
+  public void addOption(SpecOption option) {
+    options.add(option);
+  }
+
+  public void addOptions(List<SpecOption> newOptions) {
+    options.addAll(newOptions);
+  }
 }

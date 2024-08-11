@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joe.abdelaziz.food_delivery_system.base.BaseEntity;
 import com.joe.abdelaziz.food_delivery_system.restaurants.cuisine.Cuisine;
 import com.joe.abdelaziz.food_delivery_system.restaurants.restaurant.Restaurant;
-import com.joe.abdelaziz.food_delivery_system.utiles.compositeKeys.RestaurantCuisineId;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;

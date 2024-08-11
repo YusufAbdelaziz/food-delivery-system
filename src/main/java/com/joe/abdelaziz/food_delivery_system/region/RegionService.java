@@ -6,15 +6,14 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RegionService {
 
   private final RegionRepository regionRepository;
-
-  // private RegionMapper regionMapper;
+  private final RegionMapper regionMapper;
 
   public Region findRegionById(Long id) {
     Optional<Region> opRegion = regionRepository.findById(id);
@@ -24,13 +23,18 @@ public class RegionService {
     return opRegion.get();
   }
 
-  public Region insertRegion(Region region) {
-    Region insertedRegion = regionRepository.save(region);
-    return insertedRegion;
+  public RegionDTO findRegionDTOById(Long id) {
+    return regionMapper.toRegionDTO(findRegionById(id));
   }
 
-  public List<Region> findAll() {
-    return regionRepository.findAll();
+  public RegionDTO insertRegion(RegionDTO dto) {
+    Region region = regionMapper.toRegion(dto);
+    Region insertedRegion = regionRepository.save(region);
+    return regionMapper.toRegionDTO(insertedRegion);
+  }
+
+  public List<RegionDTO> findAll() {
+    return regionRepository.findAll().stream().map(region -> regionMapper.toRegionDTO(region)).toList();
   }
 
 }

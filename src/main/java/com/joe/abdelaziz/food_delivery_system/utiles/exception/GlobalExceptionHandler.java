@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -47,9 +48,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         .body(body);
   }
 
-  @ExceptionHandler(EntityNotProvidedException.class)
-  public ResponseEntity<ErrorResponse> handleEntityNotProvided(RecordNotFoundException ex) {
+  @ExceptionHandler(BusinessLogicException.class)
+  public ResponseEntity<ErrorResponse> handleBusinessException(BusinessLogicException ex) {
     log.error(ex.getMessage(), ex);
+
     ErrorResponse body = new ErrorResponse(ex.getLocalizedMessage(), Arrays.asList(ex.getMessage()));
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(body);
@@ -77,6 +79,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse(ex.toString(), errors);
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(errorResponse);
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(BadCredentialsException ex) {
+    log.error(ex.getMessage(), ex);
+    ErrorResponse body = new ErrorResponse(ex.getLocalizedMessage(), Arrays.asList(ex.getMessage()));
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
   }
 
   @ExceptionHandler(DataIntegrityViolationException.class)
@@ -128,5 +137,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(body);
   }
+
 
 }

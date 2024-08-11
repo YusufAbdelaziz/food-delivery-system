@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.joe.abdelaziz.food_delivery_system.restaurants.cuisine.Cuisine;
+import com.joe.abdelaziz.food_delivery_system.restaurants.cuisine.CuisineMapper;
 import com.joe.abdelaziz.food_delivery_system.restaurants.cuisine.CuisineService;
 import com.joe.abdelaziz.food_delivery_system.restaurants.restaurant.Restaurant;
 import com.joe.abdelaziz.food_delivery_system.restaurants.restaurant.RestaurantService;
-import com.joe.abdelaziz.food_delivery_system.utiles.compositeKeys.RestaurantCuisineId;
 import com.joe.abdelaziz.food_delivery_system.utiles.exception.RecordNotFoundException;
 
 import lombok.AllArgsConstructor;
@@ -20,27 +20,38 @@ public class RestaurantCuisineService {
   private final RestaurantCuisineRepository restaurantCuisineRepository;
   private final CuisineService cuisineService;
   private final RestaurantService restaurantService;
+  private final RestaurantCuisineMapper restaurantCuisineMapper;
+  private final CuisineMapper cuisineMapper;
+  private final RestaurantCuisineIdMapper restaurantCuisineIdMapper;
 
-  public RestaurantCuisine getById(RestaurantCuisineId id) {
-    return restaurantCuisineRepository.findById(id)
-        .orElseThrow(() -> new RecordNotFoundException(String.format("Cuisine id %d is not found", id)));
+  public RestaurantCuisineDTO getById(RestaurantCuisineIdDTO id) {
+    return restaurantCuisineMapper.toRestaurantCuisineDTO(
+        restaurantCuisineRepository.findById(restaurantCuisineIdMapper.toRestaurantCuisineId(id))
+            .orElseThrow(() -> new RecordNotFoundException(String.format("Cuisine id %d is not found", id))));
   }
 
-  public List<RestaurantCuisine> getAll() {
-    return restaurantCuisineRepository.findAll();
+  public List<RestaurantCuisineDTO> getAll() {
+    return restaurantCuisineRepository.findAll().stream().map(rs -> restaurantCuisineMapper.toRestaurantCuisineDTO(rs))
+        .toList();
   }
 
-  public RestaurantCuisine insert(RestaurantCuisine restaurantCuisine) {
+  public RestaurantCuisineDTO insert(RestaurantCuisineDTO dto) {
 
+    RestaurantCuisine restaurantCuisine = restaurantCuisineMapper.toRestaurantCuisine(dto);
     Restaurant restaurant = restaurantService.getById(restaurantCuisine.getRestaurant().getId());
-    Cuisine cuisine = cuisineService.getById(restaurantCuisine.getCuisine().getId());
+    Cuisine cuisine = cuisineMapper.toCuisine(cuisineService.getById(restaurantCuisine.getCuisine().getId()));
     RestaurantCuisineId id = new RestaurantCuisineId(restaurant.getId(), cuisine.getId());
 
     restaurantCuisine.setCuisine(cuisine);
     restaurantCuisine.setRestaurant(restaurant);
     restaurantCuisine.setId(id);
 
-    return restaurantCuisineRepository.save(restaurantCuisine);
+    return restaurantCuisineMapper.toRestaurantCuisineDTO(restaurantCuisineRepository.save(restaurantCuisine));
+  }
+
+  public void deleteRestaurantCuisine(RestaurantCuisineIdDTO dto) {
+    RestaurantCuisineId id = restaurantCuisineIdMapper.toRestaurantCuisineId(dto);
+    restaurantCuisineRepository.deleteById(id);
   }
 
 }

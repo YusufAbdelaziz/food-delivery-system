@@ -6,7 +6,6 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.joe.abdelaziz.food_delivery_system.base.BaseEntity;
 import com.joe.abdelaziz.food_delivery_system.restaurants.item.Item;
-import com.joe.abdelaziz.food_delivery_system.restaurants.menu.Menu;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -15,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -36,12 +34,14 @@ public class Section extends BaseEntity {
   @Size(min = 5, message = "Section name should be at least 5 characters in length")
   private String name;
 
-  @ManyToOne
-  @JoinColumn(name = "menu_id")
-  private Menu menu;
 
   @Valid
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "section", orphanRemoval = true)
+  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "section_id")
   @JsonIgnoreProperties("section")
   private Set<Item> items = new HashSet<>();
+
+  public void addItem(Item item) {
+    items.add(item);
+  }
 }

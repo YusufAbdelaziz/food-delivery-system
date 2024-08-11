@@ -12,7 +12,9 @@ import com.joe.abdelaziz.food_delivery_system.courier.Courier;
 import com.joe.abdelaziz.food_delivery_system.customer.Customer;
 import com.joe.abdelaziz.food_delivery_system.orders.orderRestaurant.OrderRestaurant;
 import com.joe.abdelaziz.food_delivery_system.promotions.promotion.Promotion;
+import com.joe.abdelaziz.food_delivery_system.utiles.validation.NullableRating;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,16 +26,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PostLoad;
+import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Null;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "`order`")
 @Getter
 @Setter
 public class Order extends BaseEntity {
@@ -50,8 +50,8 @@ public class Order extends BaseEntity {
   @JoinColumn(name = "promotion_id", nullable = true)
   private Promotion promotion;
 
-  @OneToMany(mappedBy = "order")
-  private Set<OrderRestaurant> orderRestaurants = new HashSet<>();
+  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+  private Set<OrderRestaurant> restaurants = new HashSet<>();
 
   @ManyToOne
   @JoinColumn(name = "courier_id")
@@ -64,32 +64,30 @@ public class Order extends BaseEntity {
   @Transient
   private Address activeCustomerAddress;
 
+  private BigDecimal totalDeliveryFees;
+
+  private BigDecimal discountedTotalDeliveryFees;
+
+  private BigDecimal discountedOrderTotal;
+
   private LocalDateTime estimatedDeliveryDate;
 
-  @Null
-  @Positive
-  @Max(value = 5)
-  @Min(value = 1)
-  private byte orderRating;
 
-  @Null
-  @Positive
-  @Max(value = 5, message = "Max value of rating is 5")
-  @Min(value = 1, message = "Min value of rating is 1")
-  private byte courierRating;
+  @NullableRating
+  private Byte courierRating;
 
-  @Null
-  @Size(max = 2000, message = "Restaurant feedback should be at least 2000 characters in length")
-  private String restaurantFeedback;
-
-  @Null
   @Size(max = 2000, message = "Courier feedback should be at least 2000 characters in length")
   private String courierFeedback;
 
-  private BigDecimal orderTotal;
+  private BigDecimal orderTotal = new BigDecimal(0);
 
   @PostLoad
   private void populateActiveAddress() {
     this.activeCustomerAddress = customer.getActiveAddress();
+  }
+
+  public void addRestaurant(OrderRestaurant restaurant) {
+    restaurants.add(restaurant);
+    restaurant.setOrder(this);
   }
 }

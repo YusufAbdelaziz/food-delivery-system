@@ -29,15 +29,15 @@ public class Address extends BaseEntity {
   @Column(name = "address_id")
   private Long id;
 
-  private double latitude;
+  private Double latitude;
 
-  private double longitude;
+  private Double longitude;
 
   private String description;
 
   @ManyToOne()
   @JoinColumn(name = "user_id")
-  @JsonIgnoreProperties("addresses")
+  @JsonIgnoreProperties({ "addresses", "orders", "activeAddress" })
   private Customer customer;
 
   @OneToOne(mappedBy = "address")
@@ -52,13 +52,13 @@ public class Address extends BaseEntity {
 
   @NotNull
   @Positive(message = "You should put a positive number as your building number")
-  private short buildingNumber;
+  private Short buildingNumber;
 
   @NotNull
   @Positive(message = "You should put a positive number as your apartment number")
-  private short apartmentNumber;
+  private Short apartmentNumber;
 
   @NotNull
   @Column(name = "active")
-  private boolean active;
+  private Boolean active;
 }
