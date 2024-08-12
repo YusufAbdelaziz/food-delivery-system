@@ -16,7 +16,7 @@ public class SwaggerConfig {
   public OpenAPI customOpenAPI() {
     return new OpenAPI()
         .info(new Info().title("API Documentation")
-            .description("API documentation for the Food Delivery Service App")
+            .description("API documentation for the Food Delivery Service")
             .version("1.0"))
         .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
         .components(new Components().addSecuritySchemes("bearerAuth",
