@@ -8,7 +8,7 @@ It's worth to note that the user entity represents customer and admin entities.
 
 The customer can:
 
-- Register/login via phone number password, and name. The user will then receive an access and refresh tokens (JWTs) for upcoming requests.
+- Register/login via phone number, password, and name. The user will then receive an access and refresh tokens (JWTs) for upcoming requests.
 - Add/update/delete/read addresses and has to set a single address as active to make a successful order.
 - Browse the list of restaurants, select items needed and specify the quantity as well as the item specs (i.e toppings).
 - Search for restaurants via their names.
@@ -21,7 +21,7 @@ The customer can:
 
 The admin can:
 
-- Register/login via phone number password, and name. The admin will then receive an access and refresh tokens (JWTs) for upcoming requests (admin related authority).
+- Register/login via phone number, password, and name. The admin will then receive an access and refresh tokens (JWTs) for upcoming requests (admin related authority).
 - Add/update/delete restaurants and insert the name and the address of each one.
 - Add/update/delete a menu of a restaurant, sections to that menu, items to the sections as well as specs for each item.
 - Add/update/delete regions which is later used in users, restaurants, and calculating delivery fees.
@@ -34,7 +34,7 @@ The admin can:
 
 The courier can:
 
-- Register/login via phone number password, and name. The courier will then receive an access and refresh tokens (JWTs) for upcoming requests (courier related authority).
+- Register/login via phone number, password, and name. The courier will then receive an access and refresh tokens (JWTs) for upcoming requests (courier related authority).
 - View the order(s), its items, and the specs.
 - View the customer and the restaurant infos.
 - Update the current status of an order ("Pending", "Preparing", "Dispatched", "Successful").
