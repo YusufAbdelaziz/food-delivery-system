@@ -41,7 +41,7 @@ Head to [Features](./FEATURES.md) to see the full features of the system.
 - JWT for authentication and authorization
 - Lombok for reducing boilerplate code
 - MapStruct for object mapping
-- OpenAPI (Swagger)for API documentation
+- OpenAPI (Swagger) for API documentation
 - Maven for dependency management and build - automation
 - Validation
 - Spring Boot Actuator for application monitoring and management
